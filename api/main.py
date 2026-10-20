@@ -8,8 +8,8 @@ from typing import List
 from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
 # Prometheus Metrics Client
@@ -297,7 +297,7 @@ def mock_traffic(db: Session = Depends(get_db)):
 def health_check(db: Session = Depends(get_db)):
     try:
         # Assert database select operates
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "healthy", "database": "connected"}
     except Exception as e:
         raise HTTPException(
